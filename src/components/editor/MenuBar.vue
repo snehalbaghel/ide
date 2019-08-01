@@ -126,7 +126,7 @@
     components: {language, Settings, Share, LoginButton},
     data() {
       return {
-        languages: ['C', 'C++', 'C#', 'Java', 'Python', 'Python3', 'Javascript', 'NodeJs', 'Ruby'],
+        languages: ['C++', 'C++14', 'C#', 'Java7', 'Java8', 'Python', 'Node6', 'Node8'],
         fullscreen: false,
         loading: false,
         fileName: this.$store.state.fileName
@@ -139,23 +139,25 @@
           if (!this.$store.state.showInOutBox)
             this.$store.commit('toggleInOutBox')
           this.loading = false
-          if (data.result == 'compile_error') {
+          if (data.result == 'error') {
+            // TODO fix: taskmaster is putting err in stdout 
             this.$notify({
-              text: 'Compilation Error',
+              text: 'Compilation Error',  // Runtime?
               type: 'error'
             })
-          } else if (data.result == 'success') {
-            if (data.data.testcases[0].result == 'run-error') {
-              this.$notify({
-                text: 'Runtime Error',
-                type: 'error'
-              })
-            } else {
+          } 
+          else if (data.result == 'success') {
+            // if (data.data.testcases[0].result == 'run-error') {
+              // this.$notify({
+                // text: 'Runtime Error',
+                // type: 'error'
+              // })
+            // } else {
               this.$notify({
                 text: 'Code Compiled Successfully',
                 type: 'success'
               })
-            }
+            // }
           }
         }).catch(err => {
           console.error(err)

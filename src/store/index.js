@@ -56,26 +56,31 @@ export default new Vuex.Store({
     },
     changeLanguage(state, val) {
       const languageMode = {
-        'C': 'c',
+        // 'C': 'c',
         'C++': 'cpp',
+        'C++14': 'cpp14',
         'C#': 'csharp',
-        'Java': 'java',
-        'Python': 'python',
-        'Python3': 'python',
-        'Javascript': 'javascript',
-        'NodeJs': 'javascript',
-        'Ruby': 'ruby'
+        'Java7': 'java7',
+        'Java8': 'java8',
+        'Python2': 'py2',
+        // 'Python3': 'python',
+        // 'Javascript': 'javascript',
+        'Node6': 'nodejs6',
+        'Node8': 'nodejs8',
+        // 'Ruby': 'ruby',
       }
       const extension = {
-        'C': '.c',
+        // 'C': '.c',
         'C++': '.cpp',
+        'C++14': '.cpp',
         'C#': '.cs',
-        'Java': '.java',
-        'Python': '.py',
-        'Python3': '.py',
-        'Javascript': '.js',
-        'NodeJs': '.js',
-        'Ruby': '.rb'
+        'Java7': '.java',
+        'Java8': '.java',
+        'Python2': '.py',
+        // 'Javascript': '.js',
+        'Node6': '.js',
+        'Node8': '.js',
+        // 'Ruby': '.rb'
       }
       state.language = val
       state.languageMode = languageMode[state.language]
@@ -208,41 +213,47 @@ export default new Vuex.Store({
       }
     },
     runCode({state, commit, dispatch}) {
-      let lang = 'c'
+      let lang = 'cpp'
       switch (state.language) {
-        case 'C++':
-          lang = 'cpp';
+        case 'C++14':
+          lang = 'cpp14';
           break
         case 'C#':
           lang = 'csharp';
           break
-        case 'Javascript':
-          lang = 'jsv';
+        // case 'Javascript':
+          // lang = 'jsv';
+          // break
+        case 'Java7':
+          lang = 'java7';
           break
-        case 'Java':
-          lang = 'java';
+        case 'Java8':
+          lang = 'java8';
           break
-        case 'Python':
+        case 'Python2':
           lang = 'py2';
           break
-        case 'Python3':
-          lang = 'py3';
+        // case 'Python3':
+          // lang = 'py3';
+          // break
+        case 'Node6':
+          lang = 'nodejs6';
           break
-        case 'NodeJs':
-          lang = 'js';
+        case 'Node8':
+          lang = 'nodejs8';
           break
-        case 'Ruby':
-          lang = 'ruby';
-          break;
+        // case 'Ruby':
+        //   lang = 'ruby';
+        //   break;
       }
 
-      if (lang === 'jsv') {
-        return dispatch('runJs', {
-          state: state,
-          code: state.code[state.language],
-          input: state.customInput
-        });
-      }
+      // if (lang === 'jsv') {
+        // return dispatch('runJs', {
+          // state: state,
+          // code: state.code[state.language],
+          // input: state.customInput
+        // });
+      // }
 
       return httpPost('/run/run', {
         lang,
@@ -250,7 +261,7 @@ export default new Vuex.Store({
         input: [base64.encode(state.customInput)]
       })
         .then(({data}) => {
-          const output = data.result == 'compile_error' ? data.error : data.data.testcases[0].output
+          const output = data.status == 'error' ? data.output.stderr : data.output.stdout
           commit('updateOutput', base64.decode(output))
           return data;
         })
